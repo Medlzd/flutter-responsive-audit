@@ -12,9 +12,9 @@
 - [Why this skill](#why-this-skill)
 - [What it checks](#what-it-checks)
 - [Installation](#installation)
-  - [Option 1: one folder for every agent (recommended)](#option-1-one-folder-for-every-agent-recommended)
-  - [Option 2: per-agent install](#option-2-per-agent-install)
-  - [Option 3: skills installers](#option-3-skills-installers)
+  - [Option 1: skills installer (fastest)](#option-1-skills-installer-fastest)
+  - [Option 2: one folder for every agent (manual)](#option-2-one-folder-for-every-agent-manual)
+  - [Option 3: per-agent install](#option-3-per-agent-install)
   - [Update and uninstall](#update-and-uninstall)
 - [Usage](#usage)
 - [What you get](#what-you-get)
@@ -81,7 +81,22 @@ Requirements: `git`, plus a POSIX shell with `grep` and `find` (macOS, Linux, or
 Windows with WSL / Git Bash) for the optional pre-scan script. No Flutter SDK needed:
 the audit is static.
 
-### Option 1: one folder for every agent (recommended)
+### Option 1: skills installer (fastest)
+
+One command installs the skill in the right folder for every agent detected on your
+machine (Claude Code, Codex, Gemini CLI, Cursor, GitHub Copilot and many more).
+Requires Node.js (for `npx`):
+
+```bash
+npx skills add Medlzd/flutter-responsive-audit          # vercel-labs/skills, detects your agents
+npx skills add Medlzd/flutter-responsive-audit -a codex # or target one agent
+```
+
+> Skills are instructions that your agent follows. As with any skill, read
+> [`SKILL.md`](SKILL.md) and [`scripts/scan_patterns.sh`](scripts/scan_patterns.sh)
+> before installing. Both are short.
+
+### Option 2: one folder for every agent (manual)
 
 Clone once into the cross-agent location `~/.agents/skills`, then link it for Claude Code
 (which uses its own folder):
@@ -107,7 +122,7 @@ That single copy is picked up by:
 
 Restart your agent after installing so it discovers the skill.
 
-### Option 2: per-agent install
+### Option 3: per-agent install
 
 Each agent has a **personal** folder (all your projects) and a **project** folder
 (commit it so your whole team gets the skill). Replace `<folder>` in the command below:
@@ -156,20 +171,10 @@ Read /path/to/flutter-responsive-audit/SKILL.md and follow it exactly to audit t
 The skill is plain Markdown plus one shell script, so any agent that can read files
 and run a command can use it.
 
-### Option 3: skills installers
-
-Community installers can place the skill in the right folder for many agents at once:
-
-```bash
-npx skills add Medlzd/flutter-responsive-audit          # vercel-labs/skills, detects your agents
-npx skills add Medlzd/flutter-responsive-audit -a codex # or target one agent
-```
-
-> Skills are instructions that your agent follows. As with any skill, read
-> [`SKILL.md`](SKILL.md) and [`scripts/scan_patterns.sh`](scripts/scan_patterns.sh)
-> before installing. Both are short.
-
 ### Update and uninstall
+
+Installed with `npx skills`? Run the same `npx skills add` command again to update.
+Installed with `git clone`:
 
 ```bash
 # Update
@@ -372,7 +377,7 @@ are in [`evals/evals.json`](evals/evals.json). Results are in
 **The agent does not use the skill.**
 Check the folder name and that `SKILL.md` is directly inside it
 (`<skills-folder>/flutter-responsive-audit/SKILL.md`), then restart the agent. Use the
-manual command for your agent from the [table above](#option-2-per-agent-install), or
+manual command for your agent from the [table above](#option-3-per-agent-install), or
 mention the skill by name: *"Use the flutter-responsive-audit skill to…"*.
 
 **It says my project is not a Flutter project.**
