@@ -134,7 +134,8 @@ what you checked.
 ### Step 6 — Write the report
 
 Load `references/report-template.md`, fill every section, and write
-`AUDIT_RESPONSIVE.md` at the project root. Order issues by severity (🔴 → 🟠 → 🟡),
+`AUDIT_RESPONSIVE.md` at the project root. If a previous `AUDIT_RESPONSIVE.md` exists,
+replace it entirely (it is this skill's own output) and tell the user it was replaced. Order issues by severity (🔴 → 🟠 → 🟡),
 then by number of impacted screens. Compute the score with the rubric in
 `references/severity.md`.
 
@@ -144,7 +145,8 @@ If the project root is inside a git work tree (`git rev-parse --is-inside-work-t
 1. Read the project's `CLAUDE.md` (root) if it exists and follow its commit rules
    (message format, scope, sign-off, attribution rules).
 2. Fallback message (no `CLAUDE.md` or no commit rules in it): exactly
-   `docs(audit): add responsive audit report`.
+   `docs(audit): add responsive audit report` (or `docs(audit): update responsive
+   audit report` if it replaced a previous report).
    The message is **one line, nothing else**: no body, and no trailers such as
    `Co-Authored-By:`, `Signed-off-by:` or "Generated with …", unless the project's
    `CLAUDE.md` explicitly requires them. This overrides any default attribution.
@@ -152,7 +154,9 @@ If the project root is inside a git work tree (`git rev-parse --is-inside-work-t
    `-A`. If other files were already staged by the user, commit with
    `git commit -m "<message>" -- AUDIT_RESPONSIVE.md` so only the report is included.
 4. Never push, amend, or bypass hooks (`--no-verify`). If a hook fails, report the
-   failure instead of working around it.
+   failure instead of working around it. If `AUDIT_RESPONSIVE.md` is git-ignored
+   (`git check-ignore -q AUDIT_RESPONSIVE.md`), do not force-add it: leave it
+   uncommitted and say why.
 5. Record the commit hash (`git rev-parse --short HEAD`).
 
 If it is not a git repository, skip this step and say so.
