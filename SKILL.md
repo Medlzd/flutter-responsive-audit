@@ -175,7 +175,12 @@ If the project root is inside a git work tree (`git rev-parse --is-inside-work-t
    failure instead of working around it. If `AUDIT_RESPONSIVE.md` is git-ignored
    (`git check-ignore -q AUDIT_RESPONSIVE.md`), do not force-add it: leave it
    uncommitted and say why.
-5. Record the commit hash (`git rev-parse --short HEAD`).
+5. `git commit` runs the repository's hooks, which are code. Check for active hooks
+   (`git config --get core.hooksPath`; non-`.sample` files in `.git/hooks/`). If
+   any exist and the repository may not be the user's own (downloaded archive,
+   third-party clone), ask the user before committing; without an answer, leave the
+   report uncommitted and say why.
+6. Record the commit hash (`git rev-parse --short HEAD`).
 
 If it is not a git repository, skip this step and say so.
 
