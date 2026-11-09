@@ -1,0 +1,52 @@
+{
+  "skill_name": "flutter-responsive-audit",
+  "evals": [
+    {
+      "id": 1,
+      "name": "buggy-rtl-app",
+      "fixture": "fixtures/buggy-rtl-app",
+      "setup": "git repo with one base commit, a STAGED change to README.md and an untracked notes.txt that must not be committed",
+      "prompt": "Audit the responsiveness of my Flutter app. On my Pixel 7 the product cards look bigger than on my iPhone 16 Pro Max, and on the iPhone the title is under the Dynamic Island. The app is in Arabic (RTL), targets Android and iOS.",
+      "expected_output": "AUDIT_RESPONSIVE.md with all 3 planted issues detected and the symptoms explained; committed alone with a single-line message using the `qa` scope required by the project's CLAUDE.md.",
+      "expectations": [
+        "Detects SliverGridDelegateWithMaxCrossAxisExtent at lib/screens/home_screen.dart:37-38 and explains the column count with numbers (412 dp -> 3 columns, 440 pt -> 4 columns)",
+        "Detects the missing SafeArea on the HomeScreen Scaffold body (lib/screens/home_screen.dart:23-24) as a critical issue",
+        "Detects EdgeInsets.only(left:...) in an RTL app at lib/screens/home_screen.dart:28 and :61, grouped into one issue",
+        "Every cited file:line exists in the fixture",
+        "Report contains the 6 template sections and a score /10",
+        "No project file other than AUDIT_RESPONSIVE.md created or modified",
+        "Exactly one new commit containing only AUDIT_RESPONSIVE.md; README.md still staged; notes.txt still untracked",
+        "Commit message is one line, Conventional Commits, scope `qa`, no Claude/AI mention"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "clean-app",
+      "fixture": "fixtures/clean-app",
+      "setup": "git repo with one base commit, no CLAUDE.md",
+      "prompt": "Can you check my Flutter app for responsive or adaptive layout problems? No specific symptoms, I just want a review before release. LTR, Android and iOS, tablets included.",
+      "expected_output": "AUDIT_RESPONSIVE.md with no critical issues, a high score (>= 8.5), strengths listed, no invented issues; committed alone with the fallback message.",
+      "expectations": [
+        "Zero 🔴 issues",
+        "Score >= 8.5/10",
+        "Any reported issue is real (cites an existing line and is a defensible minor point) or marked Needs verification",
+        "Strengths section cites MediaQuery.sizeOf, NavigationRail at >= 600, GlobalKey state preservation, SafeArea on body, withClampedTextScaling, max width constraints",
+        "No project file other than AUDIT_RESPONSIVE.md created or modified",
+        "Exactly one new commit containing only AUDIT_RESPONSIVE.md with message `docs(audit): add responsive audit report` (no CLAUDE.md in project)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "node-app",
+      "fixture": "fixtures/node-app",
+      "setup": "git repo with one base commit",
+      "prompt": "Audit the responsiveness of this app and tell me what breaks on small screens.",
+      "expected_output": "The skill stops at Step 1 and says this is not a Flutter project. No file written, no commit.",
+      "expectations": [
+        "States clearly that the project is not a Flutter app (no pubspec.yaml)",
+        "Does not create AUDIT_RESPONSIVE.md or any other file",
+        "No new commit"
+      ]
+    }
+  ]
+}
