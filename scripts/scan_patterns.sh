@@ -23,7 +23,7 @@ if [ ! -f pubspec.yaml ]; then
   echo "NOT_FLUTTER: no pubspec.yaml found in $(pwd)"
   exit 2
 fi
-if ! grep -qE '^[[:space:]]+sdk:[[:space:]]*flutter[[:space:]]*$' pubspec.yaml; then
+if ! grep -qE '^[[:space:]]+sdk:[[:space:]]*["'"'"']?flutter["'"'"']?([[:space:]]|#|$)' pubspec.yaml; then
   echo "NOT_FLUTTER: pubspec.yaml does not declare the flutter SDK dependency"
   exit 2
 fi
@@ -49,7 +49,7 @@ scan() {
   pattern=$2
   out=$(dart_files | while IFS= read -r f; do
           grep -nE -- "$pattern" "$f" /dev/null 2>/dev/null
-        done | sed 's/^\(.*:[0-9][0-9]*:\)[[:space:]]*/\1 /')
+        done | sed 's/^\([^:]*:[0-9][0-9]*:\)[[:space:]]*/\1 /')
   if [ -n "$out" ]; then
     count=$(printf '%s\n' "$out" | wc -l | tr -d ' ')
     echo "  -- $label ($count)"
@@ -69,7 +69,7 @@ scan_file() {
   pattern=$3
   if [ -f "$file" ]; then
     out=$(grep -nE -- "$pattern" "$file" /dev/null 2>/dev/null \
-          | sed 's/^\(.*:[0-9][0-9]*:\)[[:space:]]*/\1 /')
+          | sed 's/^\([^:]*:[0-9][0-9]*:\)[[:space:]]*/\1 /')
     if [ -n "$out" ]; then
       echo "  -- $label"
       printf '%s\n' "$out" | sed 's/^/     /'
