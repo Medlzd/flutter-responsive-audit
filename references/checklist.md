@@ -5,8 +5,9 @@
 widget (`main.dart` / `app.dart`). Skip generated files (`*.g.dart`, `*.freezed.dart`,
 `*.gr.dart`, `*.config.dart`, `lib/generated/`, `l10n` output).
 
-Patterns are POSIX ERE (`grep -nE`). `scripts/scan_patterns.sh` runs the same patterns
-with the same category numbers. A match is a **candidate**: always read the code in
+Patterns are POSIX ERE (`grep -nE`). `scripts/scan_patterns.sh` runs these patterns
+under the same category numbers, plus a few "good sign" patterns (e.g. `LayoutBuilder`,
+`withClampedTextScaling`, `GlobalKey`) that feed the Strengths section. A match is a **candidate**: always read the code in
 context before confirming. Each category ends with "Manual review": things grep cannot
 find that you must check by reading screens.
 
@@ -21,10 +22,11 @@ Rule IDs refer to `references/standards.md`.
 
 **Patterns**
 ```
-(width|height):[[:space:]]*[0-9]+(\.[0-9]+)?[,)[:space:]]
-SizedBox\([[:space:]]*(width|height):[[:space:]]*[0-9]{3,}
-Container\([^)]*(width|height):[[:space:]]*[0-9]{3,}
+(width|height):[[:space:]]*[0-9]{3,}(\.[0-9]+)?[,)[:space:]]
+height:[[:space:]]*double\.infinity
 ```
+Values < 100 are mostly gaps and icons; check them only when reading a suspicious
+widget (e.g. several fixed widths in one `Row`).
 
 **False positives:** spacers (`SizedBox(height: 16)`), dividers, icon/avatar sizes
 ≤ 64, fixed sizes inside a `FittedBox`/`AspectRatio`, sizes from a design-token
@@ -78,8 +80,7 @@ widgets, MediaQuery used where the parent's constraints matter.
 ```
 MediaQuery\.of\([a-zA-Z_]*\)\.size
 MediaQuery\.of\([a-zA-Z_]*\)\.(padding|viewInsets|viewPadding|orientation|textScaleFactor|textScaler)
-MediaQuery\.(sizeOf|of\([a-zA-Z_]*\)\.size)\([^)]*\)?\.(width|height)[[:space:]]*\*[[:space:]]*0?\.[0-9]+
-\.size\.(width|height)[[:space:]]*\*[[:space:]]*0?\.[0-9]+
+(size|sizeOf\([a-zA-Z_]*\))\.(width|height)[[:space:]]*[*/][[:space:]]*[0-9]*\.?[0-9]+
 ```
 
 **False positives:** a single `MediaQuery.sizeOf` at the root to pick a layout;
