@@ -30,7 +30,7 @@
         "Zero 🔴 issues",
         "Score >= 8.5/10",
         "Any reported issue is real (cites an existing line and is a defensible minor point) or marked Needs verification",
-        "Strengths section cites MediaQuery.sizeOf, LayoutBuilder, NavigationRail at >= 600, SafeArea on body, withClampedTextScaling, max width constraints",
+        "Strengths section cites MediaQuery.sizeOf, NavigationRail at >= 600, GlobalKey state preservation, SafeArea on body, withClampedTextScaling, max width constraints",
         "No project file other than AUDIT_RESPONSIVE.md created or modified",
         "Exactly one new commit containing only AUDIT_RESPONSIVE.md with message `docs(audit): add responsive audit report` (no CLAUDE.md in project)"
       ]

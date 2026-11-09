@@ -22,30 +22,19 @@ class NotesListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Notes')),
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final columns = (constraints.maxWidth / 360).floor().clamp(1, 3);
-            return Align(
-              alignment: AlignmentDirectional.topCenter,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: Breakpoints.maxContentWidth * 1.5,
-                ),
-                child: GridView.builder(
-                  key: const PageStorageKey('notes-grid'),
-                  padding: const EdgeInsetsDirectional.all(16),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    mainAxisExtent: 120,
-                  ),
-                  itemCount: _notes.length,
-                  itemBuilder: (context, i) => _NoteTile(note: _notes[i]),
-                ),
-              ),
-            );
-          },
+        child: Align(
+          alignment: AlignmentDirectional.topCenter,
+          child: ConstrainedBox(
+            constraints:
+                const BoxConstraints(maxWidth: Breakpoints.maxContentWidth),
+            child: ListView.separated(
+              key: const PageStorageKey('notes-list'),
+              padding: const EdgeInsetsDirectional.all(16),
+              itemCount: _notes.length,
+              separatorBuilder: (context, i) => const SizedBox(height: 12),
+              itemBuilder: (context, i) => _NoteTile(note: _notes[i]),
+            ),
+          ),
         ),
       ),
     );
@@ -60,6 +49,8 @@ class _NoteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    // Height is driven by the content, so larger text sizes grow the tile
+    // instead of clipping it.
     return Card(
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 8, 12),
@@ -76,13 +67,11 @@ class _NoteTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Flexible(
-                    child: Text(
-                      note.excerpt,
-                      style: textTheme.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  Text(
+                    note.excerpt,
+                    style: textTheme.bodyMedium,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
