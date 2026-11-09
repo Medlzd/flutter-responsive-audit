@@ -11,14 +11,26 @@
 
 ROOT=${1:-.}
 MAX_PER_PATTERN=${MAX_PER_PATTERN:-60}
+MAX_LINE_CHARS=240
+
+# Audited projects may be untrusted:
+# - never follow symlinks (they could point outside the project),
+# - strip control characters and cap line length in everything printed.
+clean() {
+  tr -d '\000-\010\013-\037\177' | cut -c "1-$MAX_LINE_CHARS"
+}
 
 if [ ! -d "$ROOT" ]; then
   echo "error: '$ROOT' is not a directory" >&2
   exit 1
 fi
-cd "$ROOT" || exit 1
+cd -- "$ROOT" || exit 1
 
 # ---------------------------------------------------------------- validation
+if [ -L pubspec.yaml ]; then
+  echo "STOP: pubspec.yaml is a symlink; refusing to follow it"
+  exit 2
+fi
 if [ ! -f pubspec.yaml ]; then
   echo "NOT_FLUTTER: no pubspec.yaml found in $(pwd)"
   exit 2
@@ -27,7 +39,7 @@ if ! grep -qE '^[[:space:]]+sdk:[[:space:]]*["'"'"']?flutter["'"'"']?([[:space:]
   echo "NOT_FLUTTER: pubspec.yaml does not declare the flutter SDK dependency"
   exit 2
 fi
-if [ ! -d lib ]; then
+if [ -L lib ] || [ ! -d lib ]; then
   echo "NOT_FLUTTER: no lib/ directory"
   exit 2
 fi
@@ -49,7 +61,7 @@ scan() {
   pattern=$2
   out=$(dart_files | while IFS= read -r f; do
           grep -nE -- "$pattern" "$f" /dev/null 2>/dev/null
-        done | sed 's/^\([^:]*:[0-9][0-9]*:\)[[:space:]]*/\1 /')
+        done | sed 's/^\([^:]*:[0-9][0-9]*:\)[[:space:]]*/\1 /' | clean)
   if [ -n "$out" ]; then
     count=$(printf '%s\n' "$out" | wc -l | tr -d ' ')
     echo "  -- $label ($count)"
@@ -67,9 +79,11 @@ scan_file() {
   label=$1
   file=$2
   pattern=$3
-  if [ -f "$file" ]; then
+  if [ -L "$file" ]; then
+    echo "  -- $label: SKIPPED, $file is a symlink (not followed)"
+  elif [ -f "$file" ]; then
     out=$(grep -nE -- "$pattern" "$file" /dev/null 2>/dev/null \
-          | sed 's/^\([^:]*:[0-9][0-9]*:\)[[:space:]]*/\1 /')
+          | sed 's/^\([^:]*:[0-9][0-9]*:\)[[:space:]]*/\1 /' | clean)
     if [ -n "$out" ]; then
       echo "  -- $label"
       printf '%s\n' "$out" | sed 's/^/     /'
@@ -155,7 +169,7 @@ if [ -d assets ]; then
     ! -path '*/2.0x/*' ! -path '*/3.0x/*' | while IFS= read -r a; do
       d=$(dirname "$a"); b=$(basename "$a")
       if [ ! -f "$d/2.0x/$b" ] && [ ! -f "$d/3.0x/$b" ]; then echo "     $a"; fi
-    done | head -n 40
+    done | head -n 40 | clean
 fi
 
 section "C10 Keyboard"
@@ -196,7 +210,7 @@ scan "MediaQuery.of (rebuilds on any change)" 'MediaQuery\.of\('
 echo "  -- largest dart files (lines)"
 dart_files | while IFS= read -r f; do
   printf '%s %s\n' "$(wc -l < "$f" | tr -d ' ')" "$f"
-done | sort -rn | head -n 10 | sed 's/^/     /'
+done | sort -rn | head -n 10 | clean | sed 's/^/     /'
 
 echo
 echo "== END OF PRE-SCAN"
