@@ -47,6 +47,10 @@ Do NOT use when:
    outside it. Before writing the report, check `AUDIT_RESPONSIVE.md`: if it exists
    and is a symlink or not a regular file (`[ -L … ] || { [ -e … ] && [ ! -f … ]; }`),
    **stop**, write nothing, and tell the user.
+9. **No secrets in the report.** The report is committed. In code excerpts, replace
+   API keys, tokens, passwords, private URLs with credentials, and signing values with
+   `<redacted>`. Never quote `.env`, `key.properties`, `google-services.json`,
+   `GoogleService-Info.plist`, keystores, or other credential files.
 
 ## Reference files (load when needed)
 

@@ -60,7 +60,8 @@ add `⚠ Needs verification` in the Issue column when applicable.
   - `lib/…/other.dart:17`
 - **Code:**
   ```dart
-  <3–10 lines copied verbatim from the first location, with real line context>
+  <3–10 lines copied verbatim from the first location, with real line context;
+   secrets (keys, tokens, passwords) replaced by <redacted>>
   ```
 - **Why it is a problem:** <mechanism with numbers on reference devices; cite the
   rule ID and source name + URL>.
