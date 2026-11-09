@@ -178,6 +178,8 @@ scan "adaptive navigation (good sign)" 'NavigationRail|NavigationDrawer|Adaptive
 scan "bottom navigation" 'BottomNavigationBar\(|NavigationBar\(|CupertinoTabBar\('
 scan "max width constraints (good sign)" 'ConstrainedBox\(|maxWidth:'
 scan "PageStorageKey (good sign)" 'PageStorageKey'
+scan "GlobalKey (state kept across layout branches)" 'GlobalKey'
+scan_file "Android configChanges" "$ANDROID_MANIFEST" 'android:configChanges'
 
 section "C13 iOS vs Android"
 scan "permission / device plugins" 'permission_handler|geolocator|image_picker|camera|location|local_auth|Permission\.[a-zA-Z]+'

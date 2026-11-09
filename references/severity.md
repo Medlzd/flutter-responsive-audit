@@ -42,9 +42,9 @@ score = 10 − 1.5 × (#🔴) − 0.5 × (#🟠) − 0.15 × (#🟡)
 ```
 
 - Round to one decimal, clamp to [1, 10].
-- Cap at **6.0** if any 🔴 exists; cap at **4.0** if a 🔴 affects a primary flow on
-  the most common device class.
-- `Needs verification` issues count at half weight.
+- Cap at **6.0** if any **confirmed** 🔴 exists; cap at **4.0** if a confirmed 🔴
+  affects a primary flow on the most common device class.
+- `Needs verification` issues count at half weight and never trigger a cap.
 - A clean, well-built app should land at 9–10. Do not invent issues to lower a score,
   and do not hide issues to raise it.
 

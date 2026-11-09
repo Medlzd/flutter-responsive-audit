@@ -143,7 +143,11 @@ then by number of impacted screens. Compute the score with the rubric in
 If the project root is inside a git work tree (`git rev-parse --is-inside-work-tree`):
 1. Read the project's `CLAUDE.md` (root) if it exists and follow its commit rules
    (message format, scope, sign-off, attribution rules).
-2. Fallback message: `docs(audit): add responsive audit report`.
+2. Fallback message (no `CLAUDE.md` or no commit rules in it): exactly
+   `docs(audit): add responsive audit report`.
+   The message is **one line, nothing else**: no body, and no trailers such as
+   `Co-Authored-By:`, `Signed-off-by:` or "Generated with …", unless the project's
+   `CLAUDE.md` explicitly requires them. This overrides any default attribution.
 3. Stage **only** the report: `git add -- AUDIT_RESPONSIVE.md`. Never `git add .` or
    `-A`. If other files were already staged by the user, commit with
    `git commit -m "<message>" -- AUDIT_RESPONSIVE.md` so only the report is included.

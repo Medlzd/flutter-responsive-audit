@@ -291,7 +291,16 @@ BottomNavigationBar\(|NavigationBar\(
   constraint → 🟠 at ≥ 840 dp (STD-BP-3).
 - Bottom navigation at all widths, no `NavigationRail` at ≥ 600 dp → 🟠 (STD-WSC-2).
 - Scroll views/tabs without `PageStorageKey`, or layout branch that rebuilds a different
-  subtree (state lost on fold/rotation) → 🟠 (STD-BP-4).
+  subtree (state lost on fold/rotation) → 🟠 (STD-BP-4). Typical case: the same `body`
+  widget is placed at a different tree position in each branch
+  (`Scaffold(body: body)` vs `Row([rail, Expanded(child: body)])`) without a
+  `GlobalKey`: every `State` below it (text fields, scroll, tabs) is recreated when
+  the width crosses the breakpoint — which happens on phone rotation. Escalate to 🔴
+  if user input is lost.
+- `android/app/src/main/AndroidManifest.xml` activity without `android:configChanges`
+  (Flutter template value includes `orientation|screenSize|smallestScreenSize|
+  screenLayout|density|fontScale|uiMode…`) → the activity restarts on rotation, fold
+  and resize, losing in-memory state → 🟠 (STD-BP-4, STD-AND-1).
 - No size-based branching anywhere in the app → 🟠 "phone-only layout".
 
 **Rule:** STD-BP-3, STD-BP-4, STD-WSC-2, STD-AND-1.
